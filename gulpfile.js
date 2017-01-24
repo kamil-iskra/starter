@@ -23,11 +23,13 @@ var handleError = function(err) {
 }
 
 //============================================
-//Sass tasks
+//Sass and CSS tasks
 //============================================
+
+    //Compile and minify Sass files
     gulp.task('sass:prod', function() {
 	    var s = size();
-        return gulp.src('src/scss/style.scss')
+        return gulp.src('src/scss/*.scss')
 	        .pipe(plumber({
 		        errorHandler: handleError
 	        }))
@@ -52,9 +54,10 @@ var handleError = function(err) {
 	        }))
     });
 
+    // Compile Sass files
     gulp.task('sass:dev', function() {
 	    var s = size();
-        return gulp.src('src/scss/style.scss')
+        return gulp.src('src/scss/*.scss')
             .pipe(plumber({
                 errorHandler: handleError
             }))
@@ -74,6 +77,48 @@ var handleError = function(err) {
 		        onLast: true,
 		        message: function () {
 			        return 'Total CSS size ' + s.prettySize;
+		        }
+	        }))
+    });
+
+
+    // Copy CSS files
+    gulp.task('css:dev', function() {
+	    var s = size();
+        return gulp.src('src/css/*.css')
+            .pipe(plumber({
+                errorHandler: handleError
+            }))
+            .pipe(autoprefixer({browsers: ["> 1%"]}))
+	        .pipe(rename({suffix: '.min'}))
+	        .pipe(s)
+            .pipe(gulp.dest('dist/css'))
+            .pipe(browserSync.stream({match: '**/*.css'}))
+	        .pipe(notify({
+		        onLast: true,
+		        message: function () {
+			        return 'Total CSS size ' + s.prettySize;
+		        }
+	        }))
+    });
+
+    // Copy and minify CSS files
+    gulp.task('css:prod', function() {
+	    var s = size();
+        return gulp.src('src/css/*.css')
+	        .pipe(plumber({
+		        errorHandler: handleError
+	        }))
+	        .pipe(autoprefixer({browsers: ["> 1%"]}))
+	        .pipe(cleanCSS())
+	        .pipe(s)
+	        .pipe(rename({suffix: '.min'}))
+	        .pipe(gulp.dest('dist/css'))
+	        .pipe(browserSync.stream({match: '**/*.css'}))
+	        .pipe(notify({
+		        onLast: true,
+		        message: function () {
+			        return 'Total CSS size: ' + s.prettySize;
 		        }
 	        }))
     });
@@ -142,11 +187,13 @@ var handleError = function(err) {
     gulp.task('watch:prod', function() {
         gulp.watch('src/js/*.js', ['js-lint', 'js:prod']);
         gulp.watch('src/scss/**/*.scss', ['sass:prod']);
+        gulp.watch('src/css/**/*.css', ['css:prod']);
     });
 
     gulp.task('watch:dev', function() {
         gulp.watch('src/js/*.js', ['js-lint', 'js:dev']);
         gulp.watch('src/scss/**/*.scss', ['sass:dev']);
+        gulp.watch('src/css/**/*.css', ['css:dev']);
     });
 
 
@@ -172,6 +219,12 @@ var handleError = function(err) {
 		gulp.watch('**/*.php').on('change', function () {
 			browserSync.reload();
 		});
+        gulp.watch('**/*.html').on('change', function () {
+			browserSync.reload();
+		});
+        gulp.watch('js/**/*.js').on('change', function () {
+			browserSync.reload();
+		});
 	});
 
 
@@ -182,25 +235,25 @@ var handleError = function(err) {
         console.log(color('-------------------------------------------', 'YELLOW'));
         console.log(color('Kompiluje scss i lacze js', 'YELLOW'));
         console.log(color('-------------------------------------------', 'YELLOW'));
-        gulp.start('sass:dev', 'js-lint', 'js:dev');
+        gulp.start('css:dev', 'sass:dev', 'js-lint', 'js:dev');
     });
 
     gulp.task('compile:prod', function() {
         console.log(color('-------------------------------------------', 'YELLOW'));
         console.log(color('Kompiluje scss i js', 'YELLOW'));
         console.log(color('-------------------------------------------', 'YELLOW'));
-        gulp.start('sass:prod', 'js-lint', 'js:prod');
+        gulp.start('css:prod', 'sass:prod', 'js-lint', 'js:prod');
     });
 
     gulp.task('dev', function() {
-	    gulp.start('sass:dev', 'js-lint', 'js:dev', 'watch:dev', 'browser-sync-php');
+	    gulp.start('css:dev', 'sass:dev', 'js-lint', 'js:dev', 'watch:dev', 'browser-sync-php');
 	    console.log(color('-------------------------------------------', 'YELLOW'));
 	    console.log(color('Rozpoczynamy prace milordzie (DEV)', 'YELLOW'));
 	    console.log(color('-------------------------------------------', 'YELLOW'));
     });
 
     gulp.task('prod', function() {
-	    gulp.start('sass:prod', 'js-lint', 'js:prod', 'watch:prod', 'browser-sync-php');
+	    gulp.start('css:prod', 'sass:prod', 'js-lint', 'js:prod', 'watch:prod', 'browser-sync-php');
 	    console.log(color('-------------------------------------------', 'YELLOW'));
 	    console.log(color('Rozpoczynamy prace milordzie (PROD)', 'YELLOW'));
 	    console.log(color('-------------------------------------------', 'YELLOW'));

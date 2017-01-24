@@ -1,0 +1,1 @@
+{"version":3,"sources":["style.scss"],"names":[],"mappings":"AAAA;EACI,uBAAsB;EACtB,UAAS;EACT,WAAU;CACb;;AAID;EACI,gBAHQ;EAIR,wBAAuB;CAC1B","file":"style.min.css","sourcesContent":["*, *::before, *::after {\n    box-sizing: border-box;\n    margin: 0;\n    padding: 0;\n}\n\n$myVar: 45px;\n\np {\n    font-size: $myVar;\n    border: 1px solid black;\n}"]}
