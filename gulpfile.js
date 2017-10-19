@@ -200,23 +200,13 @@ var handleError = function(err) {
 //============================================
 //Server tasks
 //============================================
-	gulp.task('browser-sync-php', function() {
-		connect.server({
-			base : './dist'
-		}, function() {
-			browserSync({
-				proxy: '127.0.0.1:8000',
-				notify: false,
-				ghostMode: {
-					clicks: true,
-					location: true,
-					forms: true,
-					scroll: false
-				}
-			});
-		});
+	gulp.task('browseSync', function() {
+		browserSync.init({
+            server: "./dist",
+            notify: false
+        });
 
-		gulp.watch('**/*.php').on('change', function () {
+        gulp.watch('**/*.php').on('change', function () {
 			browserSync.reload();
 		});
         gulp.watch('**/*.html').on('change', function () {
@@ -246,16 +236,16 @@ var handleError = function(err) {
     });
 
     gulp.task('dev', function() {
-	    gulp.start('css:dev', 'sass:dev', 'js-lint', 'js:dev', 'watch:dev', 'browser-sync-php');
+	    gulp.start('css:dev', 'sass:dev', 'js-lint', 'js:dev', 'watch:dev', 'browseSync');
 	    console.log(color('-------------------------------------------', 'YELLOW'));
-	    console.log(color('Rozpoczynamy prace milordzie (DEV)', 'YELLOW'));
+	    console.log(color('Rozpoczynamy prace (DEV)', 'YELLOW'));
 	    console.log(color('-------------------------------------------', 'YELLOW'));
     });
 
     gulp.task('prod', function() {
-	    gulp.start('css:prod', 'sass:prod', 'js-lint', 'js:prod', 'watch:prod', 'browser-sync-php');
+	    gulp.start('css:prod', 'sass:prod', 'js-lint', 'js:prod', 'watch:prod', 'browseSync');
 	    console.log(color('-------------------------------------------', 'YELLOW'));
-	    console.log(color('Rozpoczynamy prace milordzie (PROD)', 'YELLOW'));
+	    console.log(color('Rozpoczynamy prace (PROD)', 'YELLOW'));
 	    console.log(color('-------------------------------------------', 'YELLOW'));
     });
 
